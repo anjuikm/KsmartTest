@@ -2,7 +2,6 @@ package com.ikm.citizen.model;
 
 import java.sql.Date;
 
-import org.antlr.v4.runtime.misc.NotNull;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
