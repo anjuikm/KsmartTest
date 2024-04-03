@@ -17,24 +17,18 @@ public class FineCalculationService {
 
     LocalDate currentDate = LocalDate.now();
 
-    long daysBetween = ChronoUnit.DAYS.between(currentDate, request.getLicenseValidDate());
+    long daysBetween = ChronoUnit.DAYS.between(currentDate, request.getRenewalDateTo());
     double fine = 0.0;
+
+    double lateFee = 0.0;
     if (daysBetween < 0) {
       double fineChecker = Double.parseDouble(request.getLicenseFee().toString()) * 3;
       fine = Math.min(fineChecker, 2000.00); // Apply Date is Greater than License Validity To Date 
-    } else {
-      fine = 0.0;
-    }
 
-    double lateFee = 0.0;
-    if (daysBetween < 30 && daysBetween >= 0) {
-        double lateFeeFirst = Double.parseDouble(request.getLicenseFee().toString()) * 0.10; //Apply Before Valid To Date and After 29 days 10%
-        lateFee = lateFeeFirst;
-      } else if (daysBetween < 0) {
-        double lateFeeFirst = Double.parseDouble(request.getLicenseFee().toString()) * 0.10; //Apply After Valid To Date 10%
-
+      double lateFeeFirst = Double.parseDouble(request.getLicenseFee().toString()) * 0.10; //Apply Before Valid To Date and After 29 days 10%
+      lateFee = lateFeeFirst;
+      if(daysBetween<-30){
         double lateFeeSecond = lateFeeFirst + Double.parseDouble(request.getLicenseFee().toString()) * 0.25; // Calculate First 10 Days 25%
-
         long additionalLateDays = (-1 * (daysBetween + 10)) / 15; // Calculate additional late days
 
         lateFeeSecond += additionalLateDays * Double.parseDouble(request.getLicenseFee().toString()) * 0.25; // Calculate Each 15 days - 25%
@@ -43,6 +37,24 @@ public class FineCalculationService {
         }
         lateFee = lateFeeSecond;
       }
+    }
+
+    // if (daysBetween < 30 && daysBetween >= 0) {
+    //     double lateFeeFirst = Double.parseDouble(request.getLicenseFee().toString()) * 0.10; //Apply Before Valid To Date and After 29 days 10%
+    //     lateFee = lateFeeFirst;
+    //   } else if (daysBetween < 0) {
+    //     double lateFeeFirst = Double.parseDouble(request.getLicenseFee().toString()) * 0.10; //Apply After Valid To Date 10%
+
+    //     double lateFeeSecond = lateFeeFirst + Double.parseDouble(request.getLicenseFee().toString()) * 0.25; // Calculate First 10 Days 25%
+
+    //     long additionalLateDays = (-1 * (daysBetween + 10)) / 15; // Calculate additional late days
+
+    //     lateFeeSecond += additionalLateDays * Double.parseDouble(request.getLicenseFee().toString()) * 0.25; // Calculate Each 15 days - 25%
+    //     if ((-1 * (daysBetween + 10)) % 15 > 0) {
+    //       lateFeeSecond += Double.parseDouble(request.getLicenseFee().toString()) * 0.25;
+    //     }
+    //     lateFee = lateFeeSecond;
+    //   }
       FineGenerationDto fineGenerationDto = FineGenerationDto.builder()
       .fine(BigDecimal.valueOf(fine))
       .lateFee(BigDecimal.valueOf(lateFee))

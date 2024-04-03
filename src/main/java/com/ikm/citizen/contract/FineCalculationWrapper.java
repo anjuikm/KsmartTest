@@ -16,5 +16,5 @@ import lombok.NoArgsConstructor;
 public class FineCalculationWrapper {
   private BigDecimal licenseFee;
   private String applicationType;
-  private LocalDate licenseValidDate;
+  private LocalDate renewalDateTo;
 }

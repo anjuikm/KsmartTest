@@ -15,5 +15,5 @@ public class FineCalculationModel {
    private String applicationType;
   
   @JsonFormat(pattern = "yyyy-MM-dd")
-  private LocalDate validFrom;
+  private LocalDate renewalDateTo;
 }
